@@ -1,25 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-// import useGetToken from "@/hooks/useGetStorage";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import SidebarMenu from "../molecules/SidebarMenu";
-// import SidebarMenuGudang from "@/hooks/useSidebarGudang";
-// import SidebarMenuTimbangan from "@/hooks/useSidebarTimbangan";
-// import SidebarMenuPusri5 from "@/hooks/useSidebarPusri5";
-// import SidebarMenuPusri6 from "@/hooks/useSidebarPusri6";
-// import SidebarMenuLogistik from "@/hooks/useSidebarLogistik";
-// import SidebarMenuEspeditor from "@/hooks/useSidebarEkspeditor";
-// import SidebarMenuApi from "@/hooks/useSidebar";
-// import SidebarMenuOther from "@/hooks/useSidebarOther";
-// import SidebarMenuSecurity from "@/hooks/useSidebarSecurity";
-// import SidebarMenuMbp from "@/hooks/useSidebarMBP";
 import { useRecoilState } from "recoil";
 import { sidebarBurger } from "../atoms/SidebarBurger";
 import SidebarMenuApi from "@/hooks/useSidebar";
 
 export default function Sidebar() {
-  // const role = useGetToken("me");
   const [burger, setBurger] = useRecoilState(sidebarBurger);
   const [isLoading, setIsloading] = useState(true);
 
@@ -30,18 +18,6 @@ export default function Sidebar() {
   const router = useRouter();
   useEffect(() => {
     if (router.isReady) {
-      // if (
-      //   router.pathname === "/master-data/truck" ||
-      //   router.pathname === "/master-data/supir" ||
-      //   router.pathname === "/master-data/product" ||
-      //   router.pathname === "/master-data/gudang" ||
-      //   router.pathname === "/master-data/gudang-tujuan" ||
-      //   router.pathname === "/master-data/checkpoint" ||
-      //   router.pathname === "/master-data/ekspeditur"
-      // ) {
-      //   setIsDropDownSidebar(true);
-      //   setIsId(true);
-      // }
       setIsloading(false);
     }
   }, [router.isReady]);
