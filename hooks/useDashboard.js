@@ -17,6 +17,8 @@ export const useDashboard = (api) => {
         if (response.status == "204") {
           return [];
         } else {
+          console.log(response.data);
+          
           return response.data;
         }
       })
