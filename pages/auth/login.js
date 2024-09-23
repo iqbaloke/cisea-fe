@@ -2,9 +2,20 @@ import Input from "@/components/atoms/Input";
 import Label from "@/components/atoms/Label";
 import Card from "@/components/molecules/Card";
 import FormInput from "@/components/molecules/Form";
+import { useAuth } from "@/hooks/useLogin";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { login } = useAuth();
+
+  const submitForm = async (event) => {
+    event.preventDefault();
+    login({ username, password });
+  };
+
   return (
     <div
       className="min-vh-100 w-100"
@@ -35,17 +46,16 @@ export default function Home() {
                   login menggunakan email dan password
                 </span>
               </div>
-              <form
-                // onSubmit={submitForm}
-                className="mt-3"
-              >
+              <form 
+              onSubmit={submitForm} 
+              className="mt-3">
                 <FormInput className="mb-3">
                   <Label>Badge / Username</Label>
                   <Input
                     name="username"
                     id="username"
                     required
-                    // onChange={(event) => setUsername(event.target.value)}
+                    onChange={(event) => setUsername(event.target.value)}
                   />
                 </FormInput>
 
@@ -56,7 +66,7 @@ export default function Home() {
                     type="password"
                     name="password"
                     id="password"
-                    // onChange={(event) => setPassword(event.target.value)}
+                    onChange={(event) => setPassword(event.target.value)}
                   />
                 </FormInput>
 
@@ -74,5 +84,3 @@ export default function Home() {
     </div>
   );
 }
-
-

@@ -15,8 +15,10 @@ import { loadingState } from "@/components/atoms/Loading";
 import FormInput from "@/components/molecules/Form";
 import Label from "@/components/atoms/Label";
 import Input from "@/components/atoms/Input";
+import useGetToken from "@/hooks/useGetStorage";
 
 export default function Index() {
+  const tokenuser = useGetToken("user");
   const [isLoading, setIsLoading] = useState(true);
   const [apiUrl, setApiUrl] = useState("/category/with-relation");
 
@@ -54,6 +56,7 @@ export default function Index() {
       .get(`/category/${id}`, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {

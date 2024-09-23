@@ -16,8 +16,10 @@ import FormInput from "@/components/molecules/Form";
 import Label from "@/components/atoms/Label";
 import Input from "@/components/atoms/Input";
 import Swal from "sweetalert2";
+import useGetToken from "@/hooks/useGetStorage";
 
 export default function Index() {
+  const tokenuser = useGetToken("user");
   const [isLoading, setIsLoading] = useState(true); //set loading default
 
   const [showKategori, setShowKatrgori] = useState(false);
@@ -54,6 +56,7 @@ export default function Index() {
       .get(`/category/with-relation`, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {
@@ -91,6 +94,7 @@ export default function Index() {
       .get(`/district`, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {
@@ -168,6 +172,7 @@ export default function Index() {
       .get(`/allocation/${id}`, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {

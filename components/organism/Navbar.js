@@ -73,36 +73,11 @@ const Navbar = (props) => {
                 <i className="ti ti-menu-2" />
               </button>
             </li>
-            {/* <li className="nav-item px-2 d-none d-lg-block mt-1">
-              <Image
-                src="/assets/images/logo/logo.png"
-                width={80}
-                height={30.14}
-                alt="Picture of the author"
-              />
-            </li> */}
-            {/* <li className="nav-item px-1 d-none d-lg-block mt-1">
-              <Image
-                src="/assets/logo/logo.png"
-                width={130}
-                height={30.14}
-                alt="Picture of the author"
-                className=" "
-              />
-            </li> */}
-            {/* <li className="nav-item px-1 d-none d-lg-block mt-1">
-              <Image
-                src="/assets/logo/teman-title.png"
-                width={65}
-                height={30.14}
-                alt="Picture of the author"
-                className=" "
-              />
-            </li> */}
+            
           </ul>
           <div className="d-block d-lg-none">
             <Image
-              src="/assets/logo/logo.png"
+              src="/assets/images/logo/logo.png"
               width={200}
               height={47.19}
               alt="Picture of the author"
@@ -144,7 +119,7 @@ const Navbar = (props) => {
                     <div className="d-flex align-items-center">
                       <div className="user-profile-img">
                         <Image
-                          src="/assets/images/profile/user-1.jpg"
+                          src="/assets/images/logo/mini.png"
                           width={35}
                           height={35}
                           alt="Picture of the author"
@@ -188,24 +163,15 @@ const Navbar = (props) => {
                               >
                                 <div className="py-3 px-7 pb-0">
                                   <h5 className="mb-0 fs-5 fw-semibold">
-                                    User Profile
+                                  {name}
                                   </h5>
                                 </div>
                                 <div className="d-flex align-items-center py-9 mx-7 border-bottom">
-                                  <Image
-                                    src="/assets/images/profile/user-1.jpg"
-                                    width={80}
-                                    height={80}
-                                    alt="Picture of the author"
-                                    className="rounded-circle"
-                                  />
-                                  <div className="ms-3">
-                                    <h5 className="mb-1 fs-3">{name}</h5>
-                                    <p className="mb-0 d-flex align-items-center gap-2">
-                                      <i className="ti ti-user fs-4 p-2 bg-light-subtle rounded" />{" "}
-                                      {roleName}
-                                    </p>
+                                  <div>
+
+                                 <strong>Role Akses : </strong> {roleName}
                                   </div>
+                                  
                                 </div>
                                 <div className="message-body">
                                   <a

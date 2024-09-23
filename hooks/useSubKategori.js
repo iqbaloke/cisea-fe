@@ -3,15 +3,18 @@ import axios from "@/lib/axios";
 import { useRecoilState } from "recoil";
 import Swal from "sweetalert2";
 import useSWR from "swr";
+import useGetToken from "./useGetStorage";
 
 export const useSubKategori = (api) => {
   const [isLoading, setIsLoading] = useRecoilState(loadingState);
+  const tokenuser = useGetToken("user");
 
   const { data: subcategory, mutate } = useSWR(api, (url) =>
     axios
       .get(url, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {
@@ -31,6 +34,7 @@ export const useSubKategori = (api) => {
       .patch(`/subcategory/${id}`, values, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {
@@ -55,6 +59,7 @@ export const useSubKategori = (api) => {
       .post("/subcategory", values, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {
@@ -96,6 +101,7 @@ export const useSubKategori = (api) => {
           .delete(`/subcategory/${id}`, {
             headers: {
               accept: "application/json",
+              Authorization: "Bearer " + tokenuser.token,
             },
           })
           .then((response) => {

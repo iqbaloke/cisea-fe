@@ -3,15 +3,18 @@ import axios from "@/lib/axios";
 import { useRecoilState } from "recoil";
 import Swal from "sweetalert2";
 import useSWR from "swr";
+import useGetToken from "./useGetStorage";
 
 export const useDistrict = (api) => {
   const [isLoading, setIsLoading] = useRecoilState(loadingState);
+  const tokenuser = useGetToken("user");
 
   const { data: district, mutate } = useSWR(api, (url) =>
     axios
       .get(url, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {
@@ -31,6 +34,7 @@ export const useDistrict = (api) => {
       .patch(`/district/${id}`, values, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {
@@ -55,6 +59,7 @@ export const useDistrict = (api) => {
       .post("/district", values, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {
@@ -96,6 +101,7 @@ export const useDistrict = (api) => {
           .delete(`/district/${id}`, {
             headers: {
               accept: "application/json",
+              Authorization: "Bearer " + tokenuser.token,
             },
           })
           .then((response) => {

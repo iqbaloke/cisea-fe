@@ -15,8 +15,10 @@ import Label from "@/components/atoms/Label";
 import Input from "@/components/atoms/Input";
 import Swal from "sweetalert2";
 import axios from "@/lib/axios";
+import useGetToken from "@/hooks/useGetStorage";
 
 export default function Index() {
+  const tokenuser = useGetToken("user");
   const [isLoading, setIsLoading] = useState(true);
   const [apiUrl, setApiUrl] = useState("/user");
 
@@ -92,6 +94,7 @@ export default function Index() {
       .get(`/user/${id}`, {
         headers: {
           accept: "application/json",
+          Authorization: "Bearer " + tokenuser.token,
         },
       })
       .then((response) => {

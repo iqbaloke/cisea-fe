@@ -11,9 +11,8 @@ export default function Template({ title, subtitle, ...props }) {
 
   useEffect(() => {
     const item = JSON.parse(localStorage.getItem("user"));
-    const role = JSON.parse(localStorage.getItem("me"));
     setName(item?.name);
-    setRoleName(role?.role_name);
+    setRoleName(item?.user_role);
   });
 
   // const { logout } = useAuth();
