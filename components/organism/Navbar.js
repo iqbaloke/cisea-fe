@@ -173,7 +173,7 @@ const Navbar = (props) => {
                                   </div>
                                   
                                 </div>
-                                <div className="message-body">
+                                {/* <div className="message-body">
                                   <a
                                     href="#"
                                     className="py-8 px-7 mt-8 d-flex align-items-center"
@@ -190,7 +190,7 @@ const Navbar = (props) => {
                                       </span>
                                     </div>
                                   </a>
-                                </div>
+                                </div> */}
                                 {/* <form 
                                 // onSubmit={handleLogout}
                                 > */}
