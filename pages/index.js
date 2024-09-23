@@ -63,8 +63,8 @@ export default function Index() {
                   onChange={(e) => handleFilterStatus(e)}
                 >
                   <option value="">All</option>
-                  {district?.data?.map((e) => {
-                    return <option value={e.id}>{e.name}</option>;
+                  {district?.data?.map((e, i) => {
+                    return <option key={i} value={e.id}>{e.name}</option>;
                   })}
                 </select>
               </div>

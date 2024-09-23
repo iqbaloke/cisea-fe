@@ -365,9 +365,9 @@ export default function Index() {
                           </div>
                           {/* <hr /> */}
                           <div className="row mt-2 mb-2">
-                            {dataKategori.map((e) => {
+                            {dataKategori.map((e, i) => {
                               return (
-                                <div className="col-md-4 mt-2">
+                                <div key={i} className="col-md-4 mt-2">
                                   <div
                                     className="p-2 text-center"
                                     style={{
