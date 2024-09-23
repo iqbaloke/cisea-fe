@@ -3,6 +3,7 @@ import Navbar from "../organism/Navbar";
 import { useEffect, useState } from "react";
 import { useRecoilState } from 'recoil'
 import { sidebarBurger } from "../atoms/SidebarBurger";
+import { useAuth } from "@/hooks/useLogin";
 
 export default function Template({ title, subtitle, ...props }) {
   const [burger,setBurger] = useRecoilState(sidebarBurger);
@@ -15,7 +16,7 @@ export default function Template({ title, subtitle, ...props }) {
     setRoleName(item?.user_role);
   });
 
-  // const { logout } = useAuth();
+  const { logout } = useAuth();
   return (
     <div data-sidebartype={burger != true ? "mini-sidebar" : "full"}>
       <div id="main-wrapper" className={burger != true ? "" : "show-sidebar"}>
@@ -25,7 +26,7 @@ export default function Template({ title, subtitle, ...props }) {
         <div className="page-wrapper">
           {/*  Header Start */}
           <Navbar 
-          // onPageChange={logout} 
+          onPageChange={logout} 
           roleName={roleName} name={name} />
           {/*  Header End */}
           <div className="body-wrapper contenbackground">

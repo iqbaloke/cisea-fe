@@ -1,9 +1,11 @@
 import axios from "@/lib/axios";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
+import useGetToken from "./useGetStorage";
 
 export const useAuth = () => {
   const router = useRouter();
+  const tokenuser = useGetToken("user");
 
   const login = async (values) => {
     Swal.fire({
@@ -39,8 +41,37 @@ export const useAuth = () => {
       });
   };
 
+  const logout = async () => {
+    Swal.fire({
+      title: "<h5>Silahkan Tunggu . . .</div>",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+    });
+    await axios
+      .post("/auth/logout", {
+        headers: {
+          accept: "application/json",
+          Authorization: "Bearer " + tokenuser?.token,
+        },
+      })
+      .then((response) => {
+        Swal.close();
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: "Berhasil Keluar",
+        }).then((result) => {
+          window.location.href = "/auth";
+        });
+      })
+      .catch((error) => {
+        Swal.close();
+        console.log(error);
+      });
+  };
+
   return {
     login,
-    // logout,
+    logout,
   };
 };
