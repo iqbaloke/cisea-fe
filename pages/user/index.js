@@ -12,18 +12,20 @@ import { useRecoilState } from "recoil";
 import { loadingState } from "@/components/atoms/Loading";
 import FormInput from "@/components/molecules/Form";
 import Label from "@/components/atoms/Label";
-import { debounce } from "lodash";
 import Input from "@/components/atoms/Input";
+import Swal from "sweetalert2";
+import axios from "@/lib/axios";
 
 export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
   const [apiUrl, setApiUrl] = useState("/user");
 
-  const { user, destroy } = useUser(apiUrl);
+  const { user, update, store, destroy } = useUser(apiUrl);
 
   const [form, setForm] = useState({
-    role: "",
+    user_role: "",
     name: "",
+    email: "",
     username: "",
     password: "",
   });
@@ -31,17 +33,21 @@ export default function Index() {
   const [showModal, setShowModal] = useRecoilState(loadingState);
   const [buttonName, setButtonName] = useState();
 
+  const [uid, setuid] = useState("");
+
   const handleShowModal = () => {
-    setForm((form) => ({
-      ...form,
-      role: "",
-      name: "",
-      username: "",
-      password: "",
-    }));
     setSelectValue(null);
     setButtonName("Tambah User");
     setShowModal(!showModal);
+    setuid("");
+    setForm((form) => ({
+      ...form,
+      user_role: "",
+      name: "",
+      email: "",
+      username: "",
+      password: "",
+    }));
   };
 
   // fetch data role
@@ -63,7 +69,7 @@ export default function Index() {
   const handleInputChange = (value) => {
     setForm((form) => ({
       ...form,
-      role: value.name,
+      user_role: value.name,
     }));
     setInputValue(value);
   };
@@ -71,6 +77,56 @@ export default function Index() {
 
   const handleDestroy = (id, name) => {
     destroy(id, name);
+  };
+
+  const handleUpdate = async (id) => {
+    setButtonName("Update User");
+
+    Swal.fire({
+      title: "<h5>Silahkan Tunggu . . .</div>",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+    });
+
+    await axios
+      .get(`/user/${id}`, {
+        headers: {
+          accept: "application/json",
+        },
+      })
+      .then((response) => {
+        Swal.close();
+        setuid(id);
+
+        setForm((form) => ({
+          ...form,
+          user_role: response.data.user_role,
+          name: response.data.name,
+          email: response.data.email,
+          username: response.data.username,
+        }));
+        setShowModal(!showModal);
+      })
+      .catch((error) => {
+        
+        Swal.fire("Error", error.data.message, "error");
+      });
+  };
+
+  const createProduct = (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+      title: "<h5>Silahkan Tunggu . . .</div>",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+    });
+
+    if (uid == "") {
+      store(form);
+    } else {
+      update(uid, form);
+    }
   };
 
   useEffect(() => {
@@ -120,16 +176,19 @@ export default function Index() {
                 ]}
               />
               <TableBody>
-                {user?.map((data, index) => {
+                {user.data?.map((data, index) => {
                   return (
                     <tr key={index}>
                       <td className="fw-light ">{index + 1}</td>
                       <td className="fw-light ">{data.name}</td>
                       <td className="fw-light ">{data.username}</td>
-                      <td className="fw-light ">{data.role}</td>
+                      <td className="fw-light ">{data.user_role}</td>
                       <td className="fw-light">
                         <div className="d-flex gap-xl-2 justify-content-center">
                           <button
+                            onClick={() => {
+                              handleUpdate(data.id);
+                            }}
                             style={{
                               backgroundColor: "#ffffc6",
                             }}
@@ -172,10 +231,7 @@ export default function Index() {
         aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
-          <form
-            autoComplete="false"
-            // onSubmit={createProduct}
-          >
+          <form autoComplete="false" onSubmit={createProduct}>
             <div className="modal-content">
               <div className="modal-header d-flex align-items-center border-bottom mt-2">
                 <div className="modal-title px-3" id="myLargeModalLabel">
@@ -218,6 +274,24 @@ export default function Index() {
                     value={form.username}
                     id="username"
                     placeholder={"Username tidak boleh kosong"}
+                    required
+                  />
+                </FormInput>
+                <FormInput className="mt-2 px-3">
+                  <Label isRequired htmlFor="label">
+                    Email
+                  </Label>
+                  <Input
+                    name="email"
+                    onChange={(e) =>
+                      setForm((form) => ({
+                        ...form,
+                        email: e.target.value,
+                      }))
+                    }
+                    value={form.email}
+                    id="email"
+                    placeholder={"Email tidak boleh kosong"}
                     required
                   />
                 </FormInput>

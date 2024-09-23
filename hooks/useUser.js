@@ -26,6 +26,55 @@ export const useUser = (api) => {
       })
   );
 
+  const update = async (id, values) => {
+    await axios
+      .patch(`/user/${id}`, values, {
+        headers: {
+          accept: "application/json",
+        },
+      })
+      .then((response) => {
+        Swal.close();
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: response.data.message,
+        });
+        mutate();
+        setIsLoading(true);
+      })
+      .catch((error) => {
+        Swal.close();
+        setIsLoading(false);
+        Swal.fire("Error", error.response.data.error, "error");
+      });
+  };
+
+  const store = async (values) => {
+    await axios
+      .post("/user", values, {
+        headers: {
+          accept: "application/json",
+        },
+      })
+      .then((response) => {
+        Swal.close();
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: "Berhasil menambahkan User",
+        });
+        mutate();
+        setIsLoading(true);
+      })
+      .catch((error) => {
+        Swal.close();
+        console.log(error);
+        setIsLoading(true);
+        Swal.fire("Error", error.response.data.message, "error");
+      });
+  };
+
   const destroy = async (id, nama) => {
     Swal.fire({
       icon: "warning",
@@ -37,12 +86,35 @@ export const useUser = (api) => {
       cancelButtonColor: "#9CA3AF",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        setIsLoading(false);
+        Swal.fire({
+          title: "<h5>Silahkan Tunggu . . .</div>",
+          showConfirmButton: false,
+          allowOutsideClick: false,
+        });
+        setIsLoading(true);
+        await axios
+          .delete(`/user/${id}`, {
+            headers: {
+              accept: "application/json",
+            },
+          })
+          .then((response) => {
+            Swal.close();
+            Swal.fire("Berhasil", "Berhasil hapus master data truk", "success");
+            mutate();
+          })
+          .catch((error) => {
+            Swal.close();
+            Swal.fire("Error", error.response.data.error, "error");
+          });
       }
     });
   };
+
   return {
     user,
+    store,
+    update,
     destroy,
   };
 };
