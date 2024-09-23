@@ -58,8 +58,8 @@ export default function Index() {
   const [selectValue, setSelectValue] = useState(null);
 
   const dataRole = [
-    { id: 1, name: "AM PPN (Assistant Manager Pajak Pertambahan Nilai)" },
-    { id: 2, name: "Spesialis Keuangan" },
+    {  name: "AM PPN (Assistant Manager Pajak Pertambahan Nilai)" },
+    {  name: "Spesialis Keuangan" },
   ];
 
   const loadOptions = (inputValue, callback) => {
@@ -69,6 +69,7 @@ export default function Index() {
   };
 
   const handleInputChange = (value) => {
+    setSelectValue(value)
     setForm((form) => ({
       ...form,
       user_role: value.name,
@@ -100,6 +101,9 @@ export default function Index() {
       .then((response) => {
         Swal.close();
         setuid(id);
+
+        setSelectValue(response.data.user_role)
+        setInputValue(response.data.user_role)
 
         setForm((form) => ({
           ...form,
@@ -322,14 +326,15 @@ export default function Index() {
                     Pilih Role
                   </Label>
                   <AsyncSelect
-                    instanceId={(e) => e.id}
+                    instanceId={(e) => e.name}
                     cacheOptions
                     required
+                    value={selectValue}
                     loadOptions={loadOptions}
                     defaultOptions={dataRole}
                     onChange={handleInputChange}
                     getOptionLabel={(e) => e.name}
-                    getOptionValue={(e) => e.id}
+                    getOptionValue={(e) => e.name}
                   />
                 </FormInput>
               </div>

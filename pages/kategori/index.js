@@ -2,6 +2,7 @@ import Card from "@/components/molecules/Card";
 import Template from "@/components/template/Template";
 import { useKategori } from "@/hooks/useKategori";
 import { useEffect, useState } from "react";
+import { debounce } from "lodash";
 
 import LoadingContent from "@/components/molecules/LoadingContent";
 import Table from "@/components/organism/Table";
@@ -16,6 +17,7 @@ import FormInput from "@/components/molecules/Form";
 import Label from "@/components/atoms/Label";
 import Input from "@/components/atoms/Input";
 import useGetToken from "@/hooks/useGetStorage";
+import AsyncSelect from "react-select/async";
 
 export default function Index() {
   const tokenuser = useGetToken("user");
@@ -31,9 +33,11 @@ export default function Index() {
 
   const [form, setForm] = useState({
     name: "",
+    jenis: "",
   });
 
   const handleShowModal = () => {
+    setSelectedOption(null);
     setButtonName("Tambah Category");
     setShowModal(!showModal);
     setuid("");
@@ -63,9 +67,12 @@ export default function Index() {
         Swal.close();
         setuid(id);
 
+        const defaultOption = { label: response.data.jenis, value: response.data.jenis };
+        setSelectedOption(defaultOption);
         setForm((form) => ({
           ...form,
           name: response.data.name,
+          jenis: response.data.jenis,
         }));
         setShowModal(!showModal);
       })
@@ -93,6 +100,41 @@ export default function Index() {
   const handleDestroy = (id, name) => {
     destroy(id, name);
   };
+
+  // fetch data kategori
+  const jenis = [
+    { name: "Penerimaan Pajak" },
+    { name: "Penerimaan Pajak Daerah" },
+    { name: "Penerimaan Bukan Pajak" },
+  ];
+
+
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  // Fungsi untuk menangani perubahan nilai
+  const handleChange = (selected) => {
+    
+    setForm((form) => ({
+      ...form,
+      jenis: selected.label,
+    }));
+    setSelectedOption(selected);
+  };
+
+  const loadOptions = (inputValue, callback) => {
+    setTimeout(() => {
+      const filteredOptions = jenis
+        .filter((item) =>
+          item.name.toLowerCase().includes(inputValue.toLowerCase())
+        )
+        .map((item) => ({
+          label: item.name,
+          value: item.name,
+        }));
+      callback(filteredOptions);
+    }, 1000); // Simulasi async (misalnya loading data dari API)
+  };
+  // end fetch data kategor
 
   useEffect(() => {
     if (kategori) {
@@ -146,13 +188,13 @@ export default function Index() {
                       <td className="fw-light">{index + 1}</td>
                       <td className="fw-light">{data.name}</td>
                       <td className="fw-light">
-                        {data.penerima_pajak_id == "1" ? (
+                        {data.jenis == "Penerimaan Pajak" ? (
                           <div>
                             <div className="fw-bold bg-success text-center text-white py-1 rounded fs-1">
                               Penerimaan Pajak
                             </div>
                           </div>
-                        ) : data.penerima_pajak_id == "2" ? (
+                        ) : data.jenis == "Penerimaan Pajak Daerah" ? (
                           <div>
                             <div className="fw-bold bg-danger text-center text-white py-1 rounded fs-1">
                               Penerimaan Pajak Daerah
@@ -169,8 +211,8 @@ export default function Index() {
                       <td className="fw-light text-center">
                         {data.subcategory.length != 0 ? (
                           <>
-                            <div className="fw-bold bg-primary text-center text-white py-1 rounded fs-1">
-                              Lihat Sub
+                            <div className="fw-bold bg-success text-center text-white py-1 rounded fs-1">
+                              Terdapat {data.subcategory.length} Sub
                             </div>
                           </>
                         ) : (
@@ -251,6 +293,19 @@ export default function Index() {
                     id="name"
                     placeholder={"Nama tidak boleh kosong"}
                     required
+                  />
+                </FormInput>
+                <FormInput className="mt-2 px-lg-3">
+                  <Label isRequired htmlFor="label">
+                    Jenis Penerima
+                  </Label>
+                  <AsyncSelect
+                    cacheOptions
+                    loadOptions={loadOptions}
+                    defaultOptions
+                    placeholder="Cari jenis penerimaan..."
+                    value={selectedOption} 
+                    onChange={handleChange} 
                   />
                 </FormInput>
               </div>
