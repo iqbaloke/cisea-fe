@@ -15,13 +15,18 @@ import { debounce } from "lodash";
 import FormInput from "@/components/molecules/Form";
 import Label from "@/components/atoms/Label";
 import Input from "@/components/atoms/Input";
+import Swal from "sweetalert2";
 
 export default function Index() {
   const [isLoading, setIsLoading] = useState(true); //set loading default
 
+  const [showKategori, setShowKatrgori] = useState(false);
+  const [dataKategori, setDataKategori] = useState(null);
+
   // set api url
-  const [apiUrl, setApiUrl] = useState("/sumber-penerima");
-  const { penerima } = usePenerima(apiUrl);
+  const [apiUrl, setApiUrl] = useState("/allocation/with-relation");
+  const { allocation, store, update, destroy } = usePenerima(apiUrl);
+  const [uid, setuid] = useState("");
   // end set api url
 
   // fetch data kategori
@@ -30,22 +35,23 @@ export default function Index() {
   const [selectValue, setSelectValue] = useState(null);
 
   const handleInputChange = (value) => {
-    setForm((form) => ({
-      ...form,
-      jenis_id: value.id,
-    }));
     setInputValue(value);
   };
 
   const handleChange = (value) => {
-    console.log(value);
+    // setShowKatrgori(true);
+    setDataKategori(value.subcategory);
 
+    setForm((form) => ({
+      ...form,
+      category_id: value.id,
+    }));
     setSelectValue(value);
   };
 
   const fetchData = (inputValue, callback) => {
     return axios
-      .get(`/kategori-dummy`, {
+      .get(`/category/with-relation`, {
         headers: {
           accept: "application/json",
         },
@@ -54,7 +60,7 @@ export default function Index() {
         if (response.status == "204") {
           return [];
         } else {
-          return response.data;
+          return response.data.data;
         }
       })
       .catch((error) => {
@@ -63,9 +69,48 @@ export default function Index() {
   };
   // end fetch data kategor
 
+  // fetch data District
+
+  const [inputValueDistrict, setInputValueDistrict] = useState("");
+  const [selectValueDistrict, setSelectValueDistrict] = useState(null);
+
+  const handleInputChangeDistrict = (value) => {
+    setInputValueDistrict(value);
+  };
+
+  const handleChangeDistrict = (value) => {
+    setForm((form) => ({
+      ...form,
+      district_id: value.id,
+    }));
+    setSelectValueDistrict(value);
+  };
+
+  const fetchDataDistrict = (inputValue, callback) => {
+    return axios
+      .get(`/district`, {
+        headers: {
+          accept: "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.status == "204") {
+          return [];
+        } else {
+          return response.data.data;
+        }
+      })
+      .catch((error) => {
+        Swal.fire("Error", error.data.message, "error");
+      });
+  };
+  // end fetch data district
+
   const [form, setForm] = useState({
-    jenis_id: "",
-    kab: "",
+    category_id: "",
+    district_id: "",
+    user_id: 1,
+    kota: "",
     provinsi: "",
     pusat: "",
   });
@@ -76,20 +121,82 @@ export default function Index() {
   const handleShowModal = () => {
     setForm((form) => ({
       ...form,
-      expeditor_uid: "",
-      truck_license_number: "",
-      truck_status: "",
+      category_id: "",
+      district_id: "",
+      user_id: 1,
+      kota: "",
+      provinsi: "",
+      pusat: "",
     }));
     setSelectValue(null);
+    setSelectValueDistrict(null);
+    setDataKategori(null);
     setButtonName("Tambah Sumber Penerima");
     setShowModal(!showModal);
   };
 
+  const createProduct = (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+      title: "<h5>Silahkan Tunggu . . .</div>",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+    });
+
+    if (uid == "") {
+      store(form);
+    } else {
+      update(uid, form);
+    }
+  };
+
+  const handleDestroy = (id, name) => {
+    destroy(id, "");
+  };
+
+  const handleUpdate = async (id) => {
+    setButtonName("Update Penerimaan");
+
+    Swal.fire({
+      title: "<h5>Silahkan Tunggu . . .</div>",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+    });
+
+    await axios
+      .get(`/allocation/${id}`, {
+        headers: {
+          accept: "application/json",
+        },
+      })
+      .then((response) => {
+        Swal.close();
+        setuid(id);
+
+        setSelectValue(response.data.category);
+        setSelectValueDistrict(response.data.district);
+        setForm((form) => ({
+          ...form,
+          category_id: response.data.category_id,
+          district_id: response.data.district_id,
+          user_id: 1,
+          kota: response.data.kota,
+          provinsi: response.data.provinsi,
+          pusat: response.data.pusat,
+        }));
+        setShowModal(!showModal);
+      })
+      .catch((error) => {
+        Swal.fire("Error", error.data.message, "error");
+      });
+  };
+
   useEffect(() => {
-    if (penerima) {
+    if (allocation) {
       setIsLoading(false);
     }
-  }, [penerima]);
+  }, [allocation]);
 
   return (
     <Template showbreadcrumb="1" title="Dashboard" subtitle="Posisi Truck">
@@ -114,6 +221,10 @@ export default function Index() {
                     className: "ps-0",
                   },
                   {
+                    name: "District",
+                    className: "",
+                  },
+                  {
                     name: "Sumber Penerimaan",
                     className: "",
                   },
@@ -136,17 +247,21 @@ export default function Index() {
                 ]}
               />
               <TableBody>
-                {penerima?.map((data, index) => {
+                {allocation.data?.map((data, index) => {
                   return (
                     <tr key={index}>
                       <td className="fw-light">{index + 1}</td>
-                      <td className="fw-light">{data.sumber_penerimaan}</td>
-                      <td className="fw-light text-center">{data.kota_kab}</td>
-                      <td className="fw-light text-center">{data.provinsi}</td>
-                      <td className="fw-light text-center">{data.pusat}</td>
+                      <td className="fw-light">{data.district.name}</td>
+                      <td className="fw-light">{data.category.name}</td>
+                      <td className="fw-light text-center">{data.kota}%</td>
+                      <td className="fw-light text-center">{data.provinsi}%</td>
+                      <td className="fw-light text-center">{data.pusat}%</td>
                       <td className="fw-light">
                         <div className="d-flex gap-xl-2 justify-content-center">
                           <button
+                            onClick={() => {
+                              handleUpdate(data.id);
+                            }}
                             style={{
                               backgroundColor: "#ffffc6",
                             }}
@@ -155,6 +270,9 @@ export default function Index() {
                             <i className="ti ti-pencil fs42 text-warning"></i>
                           </button>
                           <button
+                            onClick={() => {
+                              handleDestroy(data.id, data.name);
+                            }}
                             style={{
                               backgroundColor: "rgb(253 222 233)",
                             }}
@@ -185,10 +303,7 @@ export default function Index() {
         aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
-          <form
-            autoComplete="false"
-            // onSubmit={createProduct}
-          >
+          <form autoComplete="false" onSubmit={createProduct}>
             <div className="modal-content">
               <div className="modal-header d-flex align-items-center border-bottom mt-2">
                 <div className="modal-title px-3" id="myLargeModalLabel">
@@ -198,17 +313,17 @@ export default function Index() {
               </div>
 
               <div className="modal-body mb-3">
-                <FormInput className="mt-3 px-3">
+                <FormInput className="mt-3 px-lg-3">
                   <Label isRequired htmlFor="label">
-                    Pilih Kategori
+                    Kategori
                   </Label>
                   <AsyncSelect
                     instanceId={(e) => e.id}
                     cacheOptions
-                    defaultOptions
                     required
+                    defaultOptions
                     value={selectValue}
-                    getOptionLabel={(e) => e.jenis}
+                    getOptionLabel={(e) => e.name}
                     getOptionValue={(e) => e.id}
                     loadOptions={fetchData}
                     onInputChange={debounce((event) => {
@@ -216,27 +331,104 @@ export default function Index() {
                     }, 1000)}
                     onChange={handleChange}
                   />
+                  {dataKategori == null ? (
+                    <></>
+                  ) : (
+                    <>
+                      {dataKategori.length == 0 ? (
+                        <div
+                          className="mt-2 p-2 text-center"
+                          style={{
+                            backgroundColor: "#eeeeee",
+                            border: "solid 1px #eaeaea",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          Kategori ini tidak memiliki sub
+                        </div>
+                      ) : (
+                        <div
+                          className="mt-2 p-2 text-dark"
+                          style={{
+                            backgroundColor: "rgb(215 254 225 / 68%)",
+                            border: "1px solid rgb(181 255 149)",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          <div className="fs-3 fw-semibold mt-2">
+                            Memiliki {dataKategori.length} sub kategori :
+                          </div>
+                          {/* <hr /> */}
+                          <div className="row mt-2 mb-2">
+                            {dataKategori.map((e) => {
+                              return (
+                                <div className="col-md-4 mt-2">
+                                  <div
+                                    className="p-2 text-center"
+                                    style={{
+                                      backgroundColor: "#00ff8d",
+                                      border: "1px solid #ffffff",
+                                      borderRadius: "5px",
+                                    }}
+                                  >
+                                    {e.name}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                    // <div className="bg-danger px-lg-3 mt-2">
+                    //   Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                    //   Quis sint eum blanditiis excepturi dicta nemo sequi velit
+                    //   quibusdam cupiditate eveniet illum sunt aut, aliquid
+                    //   exercitationem iusto repudiandae! In, mollitia
+                    //   voluptatibus?
+                    // </div>
+                  )}
                 </FormInput>
 
-                <FormInput className="mt-2 px-3">
+                <FormInput className="mt-3 px-lg-3">
+                  <Label isRequired htmlFor="label">
+                    District
+                  </Label>
+                  <AsyncSelect
+                    instanceId={(e) => e.id}
+                    cacheOptions
+                    required
+                    defaultOptions
+                    value={selectValueDistrict}
+                    getOptionLabel={(e) => e.name}
+                    getOptionValue={(e) => e.id}
+                    loadOptions={fetchDataDistrict}
+                    onInputChange={debounce((event) => {
+                      handleInputChangeDistrict(event);
+                    }, 1000)}
+                    onChange={handleChangeDistrict}
+                  />
+                </FormInput>
+
+                <FormInput className="mt-3 px-3">
                   <Label isRequired htmlFor="label">
                     Kab/Kota
                   </Label>
                   <Input
-                    name="kab"
+                    name="kota"
                     onChange={(e) =>
                       setForm((form) => ({
                         ...form,
-                        kab: e.target.value,
+                        kota: e.target.value,
                       }))
                     }
-                    value={form.kab}
-                    id="kab"
+                    value={form.kota}
+                    id="kota"
                     placeholder={"No Polisi Kendaraan"}
                     required
                   />
                 </FormInput>
-                <FormInput className="mt-2 px-3">
+                <FormInput className="mt-3 px-3">
                   <Label isRequired htmlFor="label">
                     Provinsi
                   </Label>
@@ -254,7 +446,7 @@ export default function Index() {
                     required
                   />
                 </FormInput>
-                <FormInput className="mt-2 px-3">
+                <FormInput className="mt-3 px-3">
                   <Label isRequired htmlFor="label">
                     Pusat
                   </Label>
