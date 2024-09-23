@@ -39,7 +39,7 @@ const SidebarMenuApi = [
       },
       {
         name: "Sub Kategori",
-        url: "/kategori",
+        url: "/sub-kategori",
         icon: "ti ti-book",
         isOut: false,
       },
