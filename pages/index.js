@@ -65,7 +65,7 @@ export default function Index() {
   const downloadFile = async () => {
     const token = tokenuser?.token;
 
-    const response = await fetch("http://localhost:3006/exportexcel/download", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/exportexcel/download`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
