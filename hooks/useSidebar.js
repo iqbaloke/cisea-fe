@@ -37,6 +37,18 @@ const SidebarMenuApi = [
         icon: "ti ti-book",
         isOut: false,
       },
+      {
+        name: "Sub Kategori",
+        url: "/kategori",
+        icon: "ti ti-book",
+        isOut: false,
+      },
+      {
+        name: "Wilayah",
+        url: "/wilayah",
+        icon: "ti ti-location",
+        isOut: false,
+      },
     ],
   },
   {
