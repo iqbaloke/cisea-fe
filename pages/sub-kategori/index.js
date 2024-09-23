@@ -61,7 +61,7 @@ export default function Index() {
       .get(`/subcategory/${id}`, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -125,7 +125,7 @@ export default function Index() {
       .get(`/category/with-relation`, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {

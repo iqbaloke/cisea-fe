@@ -14,7 +14,7 @@ export const usePenerima = (api) => {
       .get(url, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -34,7 +34,7 @@ export const usePenerima = (api) => {
       .post("/allocation", values, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -60,7 +60,7 @@ export const usePenerima = (api) => {
       .patch(`/allocation/${id}`, values, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -101,7 +101,7 @@ export const usePenerima = (api) => {
           .delete(`/allocation/${id}`, {
             headers: {
               accept: "application/json",
-              Authorization: "Bearer " + tokenuser.token,
+              Authorization: "Bearer " + tokenuser?.token,
             },
           })
           .then((response) => {

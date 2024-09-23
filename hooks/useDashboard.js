@@ -13,7 +13,7 @@ export const useDashboard = (api) => {
       .get(url, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {

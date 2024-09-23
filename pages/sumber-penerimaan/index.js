@@ -56,7 +56,7 @@ export default function Index() {
       .get(`/category/with-relation`, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -94,7 +94,7 @@ export default function Index() {
       .get(`/district`, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -172,7 +172,7 @@ export default function Index() {
       .get(`/allocation/${id}`, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {

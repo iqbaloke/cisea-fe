@@ -14,7 +14,7 @@ export const useDistrict = (api) => {
       .get(url, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -34,7 +34,7 @@ export const useDistrict = (api) => {
       .patch(`/district/${id}`, values, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -59,7 +59,7 @@ export const useDistrict = (api) => {
       .post("/district", values, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -101,7 +101,7 @@ export const useDistrict = (api) => {
           .delete(`/district/${id}`, {
             headers: {
               accept: "application/json",
-              Authorization: "Bearer " + tokenuser.token,
+              Authorization: "Bearer " + tokenuser?.token,
             },
           })
           .then((response) => {

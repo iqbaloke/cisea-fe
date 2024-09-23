@@ -14,7 +14,7 @@ export const useSubKategori = (api) => {
       .get(url, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -34,7 +34,7 @@ export const useSubKategori = (api) => {
       .patch(`/subcategory/${id}`, values, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -59,7 +59,7 @@ export const useSubKategori = (api) => {
       .post("/subcategory", values, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
@@ -101,7 +101,7 @@ export const useSubKategori = (api) => {
           .delete(`/subcategory/${id}`, {
             headers: {
               accept: "application/json",
-              Authorization: "Bearer " + tokenuser.token,
+              Authorization: "Bearer " + tokenuser?.token,
             },
           })
           .then((response) => {

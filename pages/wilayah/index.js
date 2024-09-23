@@ -56,7 +56,7 @@ export default function Index() {
       .get(`/district/${id}`, {
         headers: {
           accept: "application/json",
-          Authorization: "Bearer " + tokenuser.token,
+          Authorization: "Bearer " + tokenuser?.token,
         },
       })
       .then((response) => {
