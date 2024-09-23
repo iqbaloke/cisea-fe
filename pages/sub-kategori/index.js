@@ -245,7 +245,7 @@ export default function Index() {
               </div>
 
               <div className="modal-body mb-3">
-                <FormInput className="mt-2 px-3">
+                <FormInput className="mt-2 px-lg-3">
                   <Label isRequired htmlFor="label">
                     Sub Kategori
                   </Label>
