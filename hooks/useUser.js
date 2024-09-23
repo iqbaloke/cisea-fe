@@ -100,7 +100,7 @@ export const useUser = (api) => {
           })
           .then((response) => {
             Swal.close();
-            Swal.fire("Berhasil", "Berhasil hapus master data truk", "success");
+            Swal.fire("Berhasil", "Berhasil hapus User", "success");
             mutate();
           })
           .catch((error) => {
