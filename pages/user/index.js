@@ -38,7 +38,7 @@ export default function Index() {
   const [uid, setuid] = useState("");
 
   const handleShowModal = () => {
-    setSelectValue(null);
+    setSelectedOption(null);
     setButtonName("Tambah User");
     setShowModal(!showModal);
     setuid("");
@@ -54,28 +54,35 @@ export default function Index() {
 
   // fetch data role
 
-  const [inputValue, setInputValue] = useState("");
-  const [selectValue, setSelectValue] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const dataRole = [
-    {  name: "AM PPN (Assistant Manager Pajak Pertambahan Nilai)" },
-    {  name: "Spesialis Keuangan" },
+    { name: "AM PPN (Assistant Manager Pajak Pertambahan Nilai)" },
+    { name: "Spesialis Keuangan" },
   ];
+
+  const handleChange = (selected) => {
+    setForm((form) => ({
+      ...form,
+      user_role: selected.label,
+    }));
+    setSelectedOption(selected);
+  };
 
   const loadOptions = (inputValue, callback) => {
     setTimeout(() => {
-      callback(filterUsers(inputValue));
-    }, 1000);
+      const filteredOptions = dataRole
+        .filter((item) =>
+          item.name.toLowerCase().includes(inputValue.toLowerCase())
+        )
+        .map((item) => ({
+          label: item.name,
+          value: item.name,
+        }));
+      callback(filteredOptions);
+    }, 1000); // Simulasi async (misalnya loading data dari API)
   };
 
-  const handleInputChange = (value) => {
-    setSelectValue(value)
-    setForm((form) => ({
-      ...form,
-      user_role: value.name,
-    }));
-    setInputValue(value);
-  };
   // end role
 
   const handleDestroy = (id, name) => {
@@ -101,9 +108,8 @@ export default function Index() {
       .then((response) => {
         Swal.close();
         setuid(id);
-
-        setSelectValue(response.data.user_role)
-        setInputValue(response.data.user_role)
+        const defaultOption = { label: response.data.user_role, value: response.data.user_role };
+        setSelectedOption(defaultOption);
 
         setForm((form) => ({
           ...form,
@@ -115,7 +121,6 @@ export default function Index() {
         setShowModal(!showModal);
       })
       .catch((error) => {
-        
         Swal.fire("Error", error.data.message, "error");
       });
   };
@@ -325,16 +330,14 @@ export default function Index() {
                   <Label isRequired htmlFor="label">
                     Pilih Role
                   </Label>
+
                   <AsyncSelect
-                    instanceId={(e) => e.name}
                     cacheOptions
-                    required
-                    value={selectValue}
                     loadOptions={loadOptions}
-                    defaultOptions={dataRole}
-                    onChange={handleInputChange}
-                    getOptionLabel={(e) => e.name}
-                    getOptionValue={(e) => e.name}
+                    defaultOptions
+                    placeholder="Search Role..."
+                    value={selectedOption}
+                    onChange={handleChange}
                   />
                 </FormInput>
               </div>
