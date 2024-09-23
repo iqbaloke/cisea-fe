@@ -3,9 +3,12 @@ import Card from "@/components/molecules/Card";
 import LoadingContent from "@/components/molecules/LoadingContent";
 import Template from "@/components/template/Template";
 import { useDashboard } from "@/hooks/useDashboard";
+import useGetToken from "@/hooks/useGetStorage";
 import { useDistrict } from "@/hooks/useWilayah";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import axios from "@/lib/axios";
+import Swal from "sweetalert2";
 
 const ChartDashboard = dynamic(
   () => import("../components/molecules/ChartDashboard"),
@@ -14,6 +17,7 @@ const ChartDashboard = dynamic(
   }
 );
 export default function Index() {
+  const tokenuser = useGetToken("user");
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState(4);
 
@@ -56,6 +60,31 @@ export default function Index() {
     setApiUrl(
       `/dashboard/by-district?districtId=${filter}&year=${e.target.value}`
     );
+  };
+
+  const downloadFile = async () => {
+    const token = tokenuser?.token;
+
+    const response = await fetch("http://localhost:3006/exportexcel/download", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "allocations.xlsx"; // Nama file unduhan
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
   };
 
   const [datarender, setDataRender] = useState(null);
@@ -126,6 +155,9 @@ export default function Index() {
           </div>
         </form>
       </div>
+      <button onClick={downloadFile} className="btn btn-primary mb-2 mt-2">
+        download excel
+      </button>
       <Card>
         {isLoading ? (
           <Card.Body>
