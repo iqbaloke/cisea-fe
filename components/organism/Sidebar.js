@@ -6,8 +6,11 @@ import SidebarMenu from "../molecules/SidebarMenu";
 import { useRecoilState } from "recoil";
 import { sidebarBurger } from "../atoms/SidebarBurger";
 import SidebarMenuApi from "@/hooks/useSidebar";
+import useGetToken from "@/hooks/useGetStorage";
+import SidebarMenuApiOther from "@/hooks/useSidebarOther";
 
 export default function Sidebar() {
+  const role = useGetToken("user");
   const [burger, setBurger] = useRecoilState(sidebarBurger);
   const [isLoading, setIsloading] = useState(true);
 
@@ -64,7 +67,14 @@ export default function Sidebar() {
                       <></>
                     ) : (
                       <>
-                      <SidebarMenu sidebarmenu={SidebarMenuApi}/>
+                        {role.user_role ==
+                        "AM PPN (Assistant Manager Pajak Pertambahan Nilai)" ? (
+                          <>
+                            <SidebarMenu sidebarmenu={SidebarMenuApi} />
+                          </>
+                        ) : (
+                          <SidebarMenu sidebarmenu={SidebarMenuApiOther} />
+                        )}
                       </>
                     )}
                   </div>
