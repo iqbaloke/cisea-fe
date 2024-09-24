@@ -34,6 +34,9 @@ export default function Index() {
   const [form, setForm] = useState({
     name: "",
     jenis: "",
+    kota: "",
+    provinsi: "",
+    pusat: "",
   });
 
   const handleShowModal = () => {
@@ -44,6 +47,9 @@ export default function Index() {
     setForm((form) => ({
       ...form,
       name: "",
+      kota: "",
+      provinsi: "",
+      pusat: "",
     }));
   };
 
@@ -67,12 +73,18 @@ export default function Index() {
         Swal.close();
         setuid(id);
 
-        const defaultOption = { label: response.data.jenis, value: response.data.jenis };
+        const defaultOption = {
+          label: response.data.jenis,
+          value: response.data.jenis,
+        };
         setSelectedOption(defaultOption);
         setForm((form) => ({
           ...form,
           name: response.data.name,
           jenis: response.data.jenis,
+          kota: response.data.kota,
+          provinsi: response.data.provinsi,
+          pusat: response.data.pusat,
         }));
         setShowModal(!showModal);
       })
@@ -108,12 +120,10 @@ export default function Index() {
     { name: "Penerimaan Bukan Pajak" },
   ];
 
-
   const [selectedOption, setSelectedOption] = useState(null);
 
   // Fungsi untuk menangani perubahan nilai
   const handleChange = (selected) => {
-    
     setForm((form) => ({
       ...form,
       jenis: selected.label,
@@ -143,7 +153,7 @@ export default function Index() {
   }, [kategori]);
   return (
     <Template showbreadcrumb="1" title="Dashboard" subtitle="Posisi Truck">
-      <div className="mb-4 d-flex justify-content-end">
+      <div className="mb-2 d-flex justify-content-end">
         <div>
           <button onClick={handleShowModal} className="btn btn-primary btn-sm">
             {" "}
@@ -168,7 +178,15 @@ export default function Index() {
                     className: "",
                   },
                   {
-                    name: "Jenis Kategori",
+                    name: "Kota",
+                    className: "",
+                  },
+                  {
+                    name: "Provinsi",
+                    className: "",
+                  },
+                  {
+                    name: "Pusat",
                     className: "",
                   },
                   {
@@ -186,28 +204,25 @@ export default function Index() {
                   return (
                     <tr key={index}>
                       <td className="fw-light">{index + 1}</td>
-                      <td className="fw-light">{data.name}</td>
                       <td className="fw-light">
+                        {data.name}{" "}
                         {data.jenis == "Penerimaan Pajak" ? (
-                          <div>
-                            <div className="fw-bold bg-success text-center text-white py-1 rounded fs-1">
-                              Penerimaan Pajak
-                            </div>
-                          </div>
+                          <span className=" px-3 fw-bold bg-success text-center text-white py-1 rounded fs-1">
+                            Penerimaan Pajak
+                          </span>
                         ) : data.jenis == "Penerimaan Pajak Daerah" ? (
-                          <div>
-                            <div className="fw-bold bg-danger text-center text-white py-1 rounded fs-1">
-                              Penerimaan Pajak Daerah
-                            </div>
-                          </div>
+                          <span className=" px-3 fw-bold bg-danger text-center text-white py-1 rounded fs-1">
+                            Penerimaan Pajak Daerah
+                          </span>
                         ) : (
-                          <div>
-                            <div className="fw-bold bg-info text-center rounded text-white py-1 fs-1">
-                              Penerimaan Bukan Pajak{" "}
-                            </div>
-                          </div>
+                          <span className=" px-3 fw-bold bg-info text-center rounded text-white py-1 fs-1">
+                            Penerimaan Bukan Pajak{" "}
+                          </span>
                         )}
                       </td>
+                      <td className="fw-light">{data.kota}%</td>
+                      <td className="fw-light">{data.provinsi}%</td>
+                      <td className="fw-light">{data.pusat}%</td>
                       <td className="fw-light text-center">
                         {data.subcategory.length != 0 ? (
                           <>
@@ -304,8 +319,63 @@ export default function Index() {
                     loadOptions={loadOptions}
                     defaultOptions
                     placeholder="Cari jenis penerimaan..."
-                    value={selectedOption} 
-                    onChange={handleChange} 
+                    value={selectedOption}
+                    onChange={handleChange}
+                  />
+                </FormInput>
+
+                <FormInput className="mt-3 px-3">
+                  <Label isRequired htmlFor="label">
+                    Kab/Kota
+                  </Label>
+                  <Input
+                    name="kota"
+                    onChange={(e) =>
+                      setForm((form) => ({
+                        ...form,
+                        kota: e.target.value,
+                      }))
+                    }
+                    value={form.kota}
+                    id="kota"
+                    placeholder={"No Polisi Kendaraan"}
+                    required
+                  />
+                </FormInput>
+                <FormInput className="mt-3 px-3">
+                  <Label isRequired htmlFor="label">
+                    Provinsi
+                  </Label>
+                  <Input
+                    name="provinsi"
+                    onChange={(e) =>
+                      setForm((form) => ({
+                        ...form,
+                        provinsi: e.target.value,
+                      }))
+                    }
+                    value={form.provinsi}
+                    id="provinsi"
+                    placeholder={"No Polisi Kendaraan"}
+                    required
+                  />
+                </FormInput>
+                <FormInput className="mt-3 px-3">
+                  <Label isRequired htmlFor="label">
+                    Pusat
+                  </Label>
+                  <Input
+                    name="pusat"
+                    onChange={(e) =>
+                      setForm((form) => ({
+                        ...form,
+                        pusat: e.target.value,
+                      }))
+                    }
+                    value={form.pusat}
+                    id="pusat"
+                    placeholder={"No Polisi Kendaraan"}
+                    required
                   />
                 </FormInput>
               </div>

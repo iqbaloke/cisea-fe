@@ -7,8 +7,6 @@ import useGetToken from "@/hooks/useGetStorage";
 import { useDistrict } from "@/hooks/useWilayah";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import axios from "@/lib/axios";
-import Swal from "sweetalert2";
 
 const ChartDashboard = dynamic(
   () => import("../components/molecules/ChartDashboard"),
@@ -62,31 +60,6 @@ export default function Index() {
     );
   };
 
-  const downloadFile = async () => {
-    const token = tokenuser?.token;
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/exportexcel/download`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "allocations.xlsx"; // Nama file unduhan
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-  };
-
   const [datarender, setDataRender] = useState(null);
 
   useEffect(() => {
@@ -100,8 +73,8 @@ export default function Index() {
     <Template showbreadcrumb="1" title="Dashboard" subtitle="Posisi Truck">
       <div className="mb-4">
         <form action="">
-          <div className="d-flex justify-content-between">
-            <div className="d-flex col-md-4 align-items-center justify-content-start">
+          <div className="d-flex justify-content-end">
+            {/* <div className="d-flex col-md-4 align-items-center justify-content-start">
               <div className="">
                 <div className="px-2 text-dark fw-semibold">
                   Filter District :{" "}
@@ -128,7 +101,7 @@ export default function Index() {
                   })}
                 </select>
               </div>
-            </div>
+            </div> */}
             <div className="d-flex col-md-4 align-items-center justify-content-end">
               <div className="">
                 <div className="px-2 text-dark fw-semibold">Year : </div>
@@ -155,9 +128,6 @@ export default function Index() {
           </div>
         </form>
       </div>
-      <button onClick={downloadFile} className="btn btn-primary mb-2 mt-2">
-        download excel
-      </button>
       <Card>
         {isLoading ? (
           <Card.Body>
@@ -165,12 +135,6 @@ export default function Index() {
           </Card.Body>
         ) : (
           <>
-            {/* <Card.Header>
-              <div className="fs-4 py-2">
-                Sumber penerimaan negara{" "}
-                <strong>{dashboard[0].district_name}</strong>
-              </div>
-            </Card.Header> */}
             <Card.Body>
               {isLoading ? (
                 <LoadingContent />

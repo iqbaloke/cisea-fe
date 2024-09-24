@@ -19,7 +19,7 @@ const SidebarMenuApiOther = [
     type: "main_menu",
     data: [
       {
-        name: "Sumber Penerimaan",
+        name: "Laporan Keuangan",
         url: "/sumber-penerimaan",
         icon: "ti ti-bookmark",
         isOut: false,
@@ -32,7 +32,7 @@ const SidebarMenuApiOther = [
     type: "main_menu",
     data: [
       {
-        name: "Kategori Setoran",
+        name: "Sumber Penerimaan",
         url: "/kategori",
         icon: "ti ti-book",
         isOut: false,

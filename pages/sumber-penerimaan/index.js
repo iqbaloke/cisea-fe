@@ -17,6 +17,9 @@ import Label from "@/components/atoms/Label";
 import Input from "@/components/atoms/Input";
 import Swal from "sweetalert2";
 import useGetToken from "@/hooks/useGetStorage";
+import { formatRupiah } from "@/utils/formatRp";
+import { formatTanggal } from "@/utils/formatTanggal";
+import { format } from "date-fns";
 
 export default function Index() {
   const tokenuser = useGetToken("user");
@@ -114,9 +117,9 @@ export default function Index() {
     category_id: "",
     district_id: "",
     user_id: 1,
-    kota: "",
-    provinsi: "",
-    pusat: "",
+    nilai: "",
+    date: "",
+    // pusat: "",
   });
 
   const [showModal, setShowModal] = useRecoilState(loadingState);
@@ -128,9 +131,8 @@ export default function Index() {
       category_id: "",
       district_id: "",
       user_id: 1,
-      kota: "",
-      provinsi: "",
-      pusat: "",
+      nilai: "",
+      date: "",
     }));
     setSelectValue(null);
     setSelectValueDistrict(null);
@@ -181,14 +183,16 @@ export default function Index() {
 
         setSelectValue(response.data.category);
         setSelectValueDistrict(response.data.district);
+
+        var dateVal = format(new Date(response.data.date), "yyyy-MM-dd");
         setForm((form) => ({
           ...form,
           category_id: response.data.category_id,
           district_id: response.data.district_id,
           user_id: 1,
-          kota: response.data.kota,
-          provinsi: response.data.provinsi,
-          pusat: response.data.pusat,
+          nilai: response.data.nilai,
+          date: dateVal,
+          // pusat: response.data.pusat,
         }));
         setShowModal(!showModal);
       })
@@ -196,6 +200,32 @@ export default function Index() {
         Swal.fire("Error", error.data.message, "error");
       });
   };
+
+  const downloadFile = async () => {
+    const token = tokenuser?.token;
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/exportexcel/download`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "allocations.xlsx"; // Nama file unduhan
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
 
   useEffect(() => {
     if (allocation) {
@@ -205,7 +235,12 @@ export default function Index() {
 
   return (
     <Template showbreadcrumb="1" title="Dashboard" subtitle="Posisi Truck">
-      <div className="mb-4 d-flex justify-content-end">
+      <div className="mb-4 d-flex justify-content-between">
+        <div>
+          <button onClick={downloadFile} className="btn btn-primary mb-2 mt-2">
+            download excel
+          </button>
+        </div>
         <div>
           <button onClick={handleShowModal} className="btn btn-primary btn-sm">
             {" "}
@@ -234,16 +269,20 @@ export default function Index() {
                     className: "",
                   },
                   {
-                    name: "Kota/Kab",
-                    className: "text-center",
+                    name: "Nilai Awal",
+                    className: "",
                   },
                   {
-                    name: "Provinsi",
-                    className: "text-center",
+                    name: "Potongan",
+                    className: "",
                   },
                   {
-                    name: "Pusat",
-                    className: "text-center",
+                    name: "Akumulasi Potongan",
+                    className: "",
+                  },
+                  {
+                    name: "Date",
+                    className: "",
                   },
                   {
                     name: "Aksi",
@@ -258,9 +297,47 @@ export default function Index() {
                       <td className="fw-light">{index + 1}</td>
                       <td className="fw-light">{data.district.name}</td>
                       <td className="fw-light">{data.category.name}</td>
-                      <td className="fw-light text-center">{data.kota}%</td>
-                      <td className="fw-light text-center">{data.provinsi}%</td>
-                      <td className="fw-light text-center">{data.pusat}%</td>
+                      <td className="fw-light ">
+                        <div className="mt-1 fs-2 fw-bold">
+                          <span className="bg-success  px-2 py-1 rounded text-white">
+                            {formatRupiah(data.nilai)}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="fw-light">
+                        <div className="mt-2 fs-2 fw-bold">
+                          <div className="mt-2">
+                            <div>
+                              Kota : {data.allocationdetail.potongan_kota}%
+                            </div>
+                            <div>
+                              Provinsi :{" "}
+                              {data.allocationdetail.potongan_provinsi}%
+                            </div>
+                            <div>
+                              Pusat : {data.allocationdetail.potongan_pusat}%
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="fw-light">
+                        <div className="mt-2 fs-2 fw-bold">
+                          <div className="mt-2">
+                            <div>
+                              Kota : {formatRupiah(data.allocationdetail.kota)}
+                            </div>
+                            <div>
+                              Provinsi :{" "}
+                              {formatRupiah(data.allocationdetail.provinsi)}
+                            </div>
+                            <div>
+                              Pusat :{" "}
+                              {formatRupiah(data.allocationdetail.pusat)}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="fw-light ">{formatTanggal(data.date)}</td>
                       <td className="fw-light">
                         <div className="d-flex gap-xl-2 justify-content-center">
                           <button
@@ -318,6 +395,44 @@ export default function Index() {
               </div>
 
               <div className="modal-body mb-3">
+                <FormInput className="mt-2 px-3">
+                  <Label isRequired htmlFor="label">
+                    Nilai
+                  </Label>
+                  <Input
+                    name="nilai"
+                    onChange={(e) =>
+                      setForm((form) => ({
+                        ...form,
+                        nilai: e.target.value,
+                      }))
+                    }
+                    value={form.nilai}
+                    id="nilai"
+                    placeholder={"Isikan nilai (value) "}
+                    required
+                  />
+                </FormInput>
+                <FormInput className="mt-2 px-3">
+                  <Label isRequired htmlFor="label">
+                    Date
+                  </Label>
+                  <Input
+                    type="date"
+                    name="date"
+                    onChange={(e) =>
+                      setForm((form) => ({
+                        ...form,
+                        date: e.target.value,
+                      }))
+                    }
+                    value={form.date}
+                    id="date"
+                    placeholder={"Wilayah tidak boleh kosong"}
+                    required
+                  />
+                </FormInput>
+
                 <FormInput className="mt-3 px-lg-3">
                   <Label isRequired htmlFor="label">
                     Kategori
@@ -385,13 +500,6 @@ export default function Index() {
                         </div>
                       )}
                     </>
-                    // <div className="bg-danger px-lg-3 mt-2">
-                    //   Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                    //   Quis sint eum blanditiis excepturi dicta nemo sequi velit
-                    //   quibusdam cupiditate eveniet illum sunt aut, aliquid
-                    //   exercitationem iusto repudiandae! In, mollitia
-                    //   voluptatibus?
-                    // </div>
                   )}
                 </FormInput>
 
@@ -414,61 +522,6 @@ export default function Index() {
                     onChange={handleChangeDistrict}
                   />
                 </FormInput>
-
-                <FormInput className="mt-3 px-3">
-                  <Label isRequired htmlFor="label">
-                    Kab/Kota
-                  </Label>
-                  <Input
-                    name="kota"
-                    onChange={(e) =>
-                      setForm((form) => ({
-                        ...form,
-                        kota: e.target.value,
-                      }))
-                    }
-                    value={form.kota}
-                    id="kota"
-                    placeholder={"No Polisi Kendaraan"}
-                    required
-                  />
-                </FormInput>
-                <FormInput className="mt-3 px-3">
-                  <Label isRequired htmlFor="label">
-                    Provinsi
-                  </Label>
-                  <Input
-                    name="provinsi"
-                    onChange={(e) =>
-                      setForm((form) => ({
-                        ...form,
-                        provinsi: e.target.value,
-                      }))
-                    }
-                    value={form.provinsi}
-                    id="provinsi"
-                    placeholder={"No Polisi Kendaraan"}
-                    required
-                  />
-                </FormInput>
-                <FormInput className="mt-3 px-3">
-                  <Label isRequired htmlFor="label">
-                    Pusat
-                  </Label>
-                  <Input
-                    name="pusat"
-                    onChange={(e) =>
-                      setForm((form) => ({
-                        ...form,
-                        pusat: e.target.value,
-                      }))
-                    }
-                    value={form.pusat}
-                    id="pusat"
-                    placeholder={"No Polisi Kendaraan"}
-                    required
-                  />
-                </FormInput>
               </div>
               <hr />
               <div className="mb-4">
@@ -481,6 +534,7 @@ export default function Index() {
                   </button>
                   <button
                     onClick={() => {
+                      setuid("");
                       handleShowModal();
                     }}
                     type="button"

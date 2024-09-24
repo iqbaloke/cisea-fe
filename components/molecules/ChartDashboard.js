@@ -47,7 +47,7 @@ const ChartDashboard = ({data}) => {
 
     let xAxis = chart.xAxes.push(
       am5xy.CategoryAxis.new(root, {
-        categoryField: "kategori",
+        categoryField: "district_name",
         renderer: xRenderer,
         tooltip: am5.Tooltip.new(root, {}),
       })
@@ -70,7 +70,7 @@ const ChartDashboard = ({data}) => {
           xAxis: xAxis,
           yAxis: yAxis,
           valueYField: fieldName,
-          categoryXField: "kategori",
+          categoryXField: "district_name",
         })
       );
 
@@ -100,9 +100,9 @@ const ChartDashboard = ({data}) => {
       legend.data.push(series);
     };
 
-    makeSeries("Kota", "kota");
-    makeSeries("Provinsi", "provinsi");
-    makeSeries("Pusat", "pusat");
+    makeSeries("Wilayah", "total_nilai");
+    // makeSeries("Provinsi", "provinsi");
+    // makeSeries("Pusat", "pusat");
 
     chart.appear(1000, 100);
 
